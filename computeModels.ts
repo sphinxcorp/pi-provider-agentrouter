@@ -20,15 +20,18 @@ export function computeModels(
 }> {
   const groupRatio = pricing.group_ratio["default"] ?? 1;
 
-  return pricing.data.map((basicInfo) => {
+  return pricing.data.flatMap((basicInfo) => {
     const modelDetail = getModelsDevDetail(basicInfo.model_name, modelsDev);
 
     const id = basicInfo.model_name;
     const name = modelDetail ? modelDetail.name : basicInfo.model_name;
 
-    const supportsAnthropic = basicInfo.supported_endpoint_types.includes("anthropic");
-    const api = supportsAnthropic ? "anthropic-messages" : "openai-completions";
-    const baseUrl = api === "openai-completions" ? `${settings.api_base}/v1` : undefined;
+    const supported = basicInfo.supported_endpoint_types.filter(
+      (t) => t === "anthropic" || t === "openai"
+    );
+    const supportsAnthropic = supported.includes("anthropic");
+    const supportsOpenai = supported.includes("openai");
+    const multiType = supportsAnthropic && supportsOpenai;
 
     const reasoning = modelDetail?.reasoning ?? false;
     const input = modelDetail?.modalities.input.filter((m) => m !== "pdf") ?? ["text"];
@@ -43,17 +46,37 @@ export function computeModels(
     const contextWindow = modelDetail?.limit?.context ?? 128_000;
     const maxTokens = modelDetail?.limit?.output ?? 4096;
 
-    return {
+    const baseEntry = {
       id,
       name,
-      api,
-      baseUrl,
       reasoning,
       input,
       cost,
       contextWindow,
       maxTokens,
     };
+
+    const results = [];
+
+    if (supportsAnthropic) {
+      results.push({
+        ...baseEntry,
+        // anthropic: api & baseUrl omitted, inherits provider-level defaults
+        api: undefined,
+        baseUrl: undefined,
+      });
+    }
+
+    if (supportsOpenai) {
+      results.push({
+        ...baseEntry,
+        name: multiType ? `${name} via OpenAI Completions` : name,
+        api: "openai-completions",
+        baseUrl: `${settings.api_base}/v1`,
+      });
+    }
+
+    return results;
   });
 }
 

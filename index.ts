@@ -15,6 +15,11 @@ export default async function (pi: ExtensionAPI) {
 
   const apiKeys = resolveApiKeys(settings);
 
+  if (settings.debug) {
+    console.log("[agentrouter] api keys:", JSON.stringify(apiKeys, null, 2));
+  }
+
+  // If no API keys are configured, register a command to configure them
   if (apiKeys.length === 0) {
     pi.registerCommand("agentrouter-config", {
       description: "Configure Agent Router settings",
@@ -54,12 +59,15 @@ export default async function (pi: ExtensionAPI) {
   }
 
   // Register a provider for each API key
+  const singleKey = apiKeys.length === 1;
   for (const { id, key } of apiKeys) {
-    const providerName = `agentrouter_${id}`;
-
+    const providerName = singleKey ? "agentrouter" : `agentrouter_${id}`;
+    if (settings.debug) {
+      console.log(`[agentrouter] registering provider ${providerName}`);
+    }
     pi.registerProvider(providerName, {
       ...providerCommon,
-      name: `Agent Router (${id})`,
+      name: singleKey ? "Agent Router" : `Agent Router (${id})`,
       apiKey: key,
       async refreshModels(_context: RefreshModelsContext) {
         try {

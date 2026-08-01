@@ -1,8 +1,42 @@
 {
-  "name": "pi-provider-agentrouter",
+  "name": "@sphcorp/pi-provider-agentrouter",
   "version": "0.1.0",
-  "description": "Agent Router provider for pi - registers providers based on API keys from ~/.agentrouter/settings.json",
+  "description": "Agent Router provider for pi coding agent",
+  "license": "MIT",
+  "author": "M N Islam Shihan <mnishihan@gmail.com>",
+  "keywords": [
+    "pi",
+    "pi-extension",
+    "pi-provider",
+    "agentrouter",
+    "llm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sphinxcorp/pi-provider-agentrouter.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "index.ts",
+    "settings.ts",
+    "fetch.ts",
+    "computeModels.ts",
+    "command.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-ai": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "pi": {
-    "extensions": ["./index.ts"]
+    "extensions": [
+      "./index.ts"
+    ]
   }
 }

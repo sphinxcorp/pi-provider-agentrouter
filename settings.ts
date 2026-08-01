@@ -29,25 +29,39 @@ export function loadSettings(cwd: string): Settings {
     if (projectSettings.debug !== undefined) {
       merged.debug = projectSettings.debug;
     }
-    // Merge keys: project keys + global keys, project keys first
-    const globalKeys = globalSettings?.api_keys ?? [];
-    const projectKeys = projectSettings?.api_keys ?? [];
-    merged.api_keys = [...projectKeys, ...globalKeys];
+  }
+
+  // AGENT_ROUTER_API_BASE overrides the default api_base
+  if (process.env.AGENT_ROUTER_API_BASE !== undefined) {
+    merged.api_base = process.env.AGENT_ROUTER_API_BASE;
   }
 
   // Apply defaults
   merged.api_base = merged.api_base ?? "https://agentrouter.org";
   merged.debug = merged.debug ?? false;
-  merged.api_keys = merged.api_keys ?? resolveDefaultApiKeys();
+
+  // Build api_keys list: env key (id: "env") first, then project + global
+  const projectKeys = projectSettings?.api_keys ?? [];
+  const globalKeys = globalSettings?.api_keys ?? [];
+  let keys: ApiKey[] = [];
+
+  // Prepend env key if AGENT_ROUTER_API_KEY is set
+  if (process.env.AGENT_ROUTER_API_KEY !== undefined) {
+    keys.push({ key: process.env.AGENT_ROUTER_API_KEY, id: "env" });
+  }
+
+  keys = [...keys, ...projectKeys, ...globalKeys];
+
+  // Deduplicate by key value, keeping first occurrence
+  const seen = new Set<string>();
+  merged.api_keys = keys.filter((k) => {
+    const keyValue = typeof k === "string" ? k : k.key;
+    if (seen.has(keyValue)) return false;
+    seen.add(keyValue);
+    return true;
+  });
 
   return merged;
-}
-
-function resolveDefaultApiKeys(): ApiKey[] {
-  if (process.env.AGENT_ROUTER_API_KEY !== undefined) {
-    return [process.env.AGENT_ROUTER_API_KEY];
-  }
-  return [];
 }
 
 function loadSettingsFile(path: string): Settings | null {
