@@ -1,0 +1,8 @@
+{
+  "name": "pi-provider-agentrouter",
+  "version": "0.1.0",
+  "description": "Agent Router provider for pi - registers providers based on API keys from ~/.agentrouter/settings.json",
+  "pi": {
+    "extensions": ["./index.ts"]
+  }
+}
