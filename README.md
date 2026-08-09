@@ -1,7 +1,18 @@
 # pi-provider-agentrouter
 
-A [pi](https://github.com/earendil-works/pi-coding-agent) extension that registers [Agent Router](https://agentrouter.org/register?aff=VSOC) models as providers, with pricing and model metadata resolved automatically at startup.
+A [pi](https://github.com/earendil-works/pi-coding-agent) extension that registers [AgentRouter](https://agentrouter.org/register?aff=VSOC) models as providers, with pricing and model metadata resolved automatically at startup.
 
+---
+## About AgentRouter
+
+[AgentRouter](https://agentrouter.org/register?aff=VSOC) unifies multiple `LLM` providers under a single `API key`, offering virtually free access to frontier models like `Claude Opus 5` or `GPT-5.6-Sol`.
+
+* 🔑 **Unified Access:** Query multiple `LLM` providers using one single `API key`.
+* 🎁 **Welcome Bonus:** Get a complimentary `$100` credit upon initial sign-up.
+* ⏳ **Daily Credits:** Earn a `$25` credit just for logging in each day.
+* 👥 **Referral Perks:** Receive `$100` per invite, and your friend gets `$50`.
+
+> 💡 **Support a fellow dev:** If you are building with `LLMs` and want to test this platform, I would be genuinely grateful if you used my [referral link](https://agentrouter.org/register?aff=VSOC). It is a kind way for us to share these development credits and support each other's projects.
 ---
 
 ## Quick Start
@@ -9,7 +20,7 @@ A [pi](https://github.com/earendil-works/pi-coding-agent) extension that registe
 **1. Install**
 
 ```bash
-pi install npm:@sphcorp/pi-provider-agentrouter
+pi install npm:@sphinxcorp/pi-provider-agentrouter
 ```
 
 <details>

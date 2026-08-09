@@ -65,10 +65,16 @@ export default async function (pi: ExtensionAPI) {
     if (settings.debug) {
       console.log(`[agentrouter] registering provider ${providerName}`);
     }
-    pi.registerProvider(providerName, {
+    const providerConfig = {
       ...providerCommon,
       name: singleKey ? "Agent Router" : `Agent Router (${id})`,
       apiKey: key,
+    }
+    if (settings.debug) {
+      console.log(`[agentrouter] provider config for ${providerName}:`, JSON.stringify(providerConfig, null, 2));
+    }
+    pi.registerProvider(providerName, {
+      ...providerConfig,
       async refreshModels(_context: RefreshModelsContext) {
         try {
           const pricing = await fetchPricing();

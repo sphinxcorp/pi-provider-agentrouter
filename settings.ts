@@ -13,10 +13,12 @@ export type Settings = {
   api_keys?: ApiKey[];
 };
 
-const GLOBAL_SETTINGS_PATH = join(homedir(), ".agentrouter", "settings.json");
+export function globalSettingsPath(): string {
+  return join(homedir(), ".agentrouter", "settings.json");
+}
 
 export function loadSettings(cwd: string): Settings {
-  const globalSettings = loadSettingsFile(GLOBAL_SETTINGS_PATH);
+  const globalSettings = loadSettingsFile(globalSettingsPath());
   const projectSettings = loadSettingsFile(join(cwd, ".agentrouter", "settings.json"));
 
   // Project settings override global settings

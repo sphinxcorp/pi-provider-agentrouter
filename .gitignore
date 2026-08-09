@@ -1,2 +1,3 @@
-prompt.md
 node_modules/
+.agentrouter/
+.DS_Store

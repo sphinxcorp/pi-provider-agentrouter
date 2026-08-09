@@ -62,15 +62,18 @@ export interface ModelsDevResponse {
   [key: string]: ModelsDevEntry;
 }
 
-const CACHE_PATH = join(homedir(), ".agentrouter", ".models-cache.json");
+export function modelsCachePath(): string {
+  return join(homedir(), ".agentrouter", ".models-cache.json");
+}
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 export async function fetchModelsDev(): Promise<ModelsDevResponse> {
-  if (existsSync(CACHE_PATH)) {
-    const stat = statSync(CACHE_PATH);
+  const cachePath = modelsCachePath();
+  if (existsSync(cachePath)) {
+    const stat = statSync(cachePath);
     if (Date.now() - stat.mtimeMs < CACHE_TTL_MS) {
       try {
-        return JSON.parse(readFileSync(CACHE_PATH, "utf-8"));
+        return JSON.parse(readFileSync(cachePath, "utf-8"));
       } catch {
         // cache corrupted, re-fetch
       }
@@ -83,11 +86,11 @@ export async function fetchModelsDev(): Promise<ModelsDevResponse> {
   }
   const data = (await res.json()) as ModelsDevResponse;
 
-  const cacheDir = dirname(CACHE_PATH);
+  const cacheDir = dirname(cachePath);
   if (!existsSync(cacheDir)) {
     mkdirSync(cacheDir, { recursive: true });
   }
-  writeFileSync(CACHE_PATH, JSON.stringify(data));
+  writeFileSync(cachePath, JSON.stringify(data));
 
   return data;
 }
